@@ -1,7 +1,6 @@
 <template>
-
     <Head>
-        <title>Login Account - Cafe Mami</title>
+        <title>Forgot Password - CAFE-MAMI</title>
     </Head>
     <div class="col-md-4">
         <div class="fade-in">
@@ -15,8 +14,7 @@
                 <div class="card border-top-purple border-0 shadow-sm rounded-3">
                     <div class="card-body">
                         <div class="text-start">
-                            <h5>LOGIN ACCOUNT</h5>
-                            <p class="text-muted">Sign In to your account</p>
+                            <h5>RESET PASSWORD</h5>
                         </div>
                         <hr>
                         <div v-if="session.status" class="alert alert-success mt-2">
@@ -34,23 +32,9 @@
                             <div v-if="errors.email" class="alert alert-danger">
                                 {{ errors.email }}
                             </div>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fa fa-lock"></i>
-                                    </span>
-                                </div>
-                                <input class="form-control" v-model="form.password" :class="{ 'is-invalid': errors.password }" type="password" placeholder="Password">
-                            </div>
-                            <div v-if="errors.password" class="alert alert-danger">
-                                {{ errors.password }}
-                            </div>
                             <div class="row">
-                                <div class="col-12 mb-3 text-end">
-                                    <Link href="/forgot-password">Forgot Password?</Link>
-                                </div>
                                 <div class="col-12">
-                                    <button class="btn btn-primary shadow-sm rounded-sm px-4 w-100" type="submit">LOGIN</button>
+                                    <button class="btn btn-primary shadow-sm rounded-sm px-4 w-100" type="submit">SEND PASSWORD RESET LINK</button>
                                 </div>
                             </div>
                         </form>
@@ -97,18 +81,12 @@
             //define form state
             const form = reactive({
                 email: '',
-                password: '',
             });
 
             //submit method
             const submit = () => {
-
-                //send data to server
-                router.post('/login', {
-
-                    //data
-                    email: form.email,
-                    password: form.password,
+                router.post('/forgot-password', {
+                    email: form.email
                 });
             }
 
