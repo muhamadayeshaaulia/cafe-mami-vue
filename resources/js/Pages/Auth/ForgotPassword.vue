@@ -8,7 +8,7 @@
             <div class="text-center mb-4">
                 <a href="" class="text-dark text-decoration-none">
                     <img src="/images/vue1.png" width="100px" class="vue-3d-spin">
-                    <h3 class="mt-2 font-weight-bold">CAFE-MAMI bos</h3>
+                    <h3 class="mt-2 font-weight-bold">CAFE-MAMI</h3>
                 </a>
             </div>
             <div class="card-group">
