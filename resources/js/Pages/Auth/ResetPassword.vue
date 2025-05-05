@@ -1,17 +1,18 @@
 <template>
     <Head>
         <title>Update Password - CAFE-MAMI</title>
+        <link rel="icon" href="/images/vue2.png"type="image/png">
     </Head>
     <div class="col-md-4">
         <div class="fade-in">
             <div class="text-center mb-4">
                 <a href="" class="text-dark text-decoration-none">
-                    <img src="/images/cash-machine.png" width="70">
+                    <img src="/images/vue1.png" width="100px" class="vue-3d-spin">
                     <h3 class="mt-2 font-weight-bold">CAFE-MAMI</h3>
                 </a>
             </div>
             <div class="card-group">
-                <div class="card border-top-purple border-0 shadow-sm rounded-3">
+                <div class="card border-top-green border-0 shadow-sm rounded-3">
                     <div class="card-body">
                         <div class="text-start">
                             <h5>UPDATE PASSWORD</h5>
@@ -132,5 +133,19 @@
 </script>
 
 <style>
+  .vue-3d-spin {
+    transform-style: preserve-3d;
+    animation: spin3d 3s linear infinite;
+    display: inline-block;
+    perspective: 1000px;
+  }
 
+  @keyframes spin3d {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }
 </style>

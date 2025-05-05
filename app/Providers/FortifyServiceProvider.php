@@ -44,17 +44,14 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
-        //login
         Fortify::loginView(function () {
             return Inertia::render('Auth/Login');
         });
 
-        //forgot
         Fortify::requestPasswordResetLinkView(function () {
             return Inertia::render('Auth/ForgotPassword');
         });
 
-        //reset
         Fortify::resetPasswordView(function ($request) {
             return Inertia::render('Auth/ResetPassword', [
                 'request' => $request,
