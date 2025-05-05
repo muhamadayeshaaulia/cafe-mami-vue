@@ -23,8 +23,12 @@ body {
 }
 
 .btn-primary:focus {
-    background-color: #894b9d !important;
-    border-color: #894b9d !important;
+    background-color:  #42b883 !important;
+    border-color:  #42b883 !important;
+}
+.btn-primary:focus:hover {
+    background-color: #35495e !important;
+    border-color: #35495e !important;
 }
 
 .text-primary {
