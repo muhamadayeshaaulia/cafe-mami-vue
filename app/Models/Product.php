@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use illuminate\Database\Eloquent\casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,4 +19,26 @@ class Product extends Model
      protected $fillable = [
         'image','barcode','title','description','buy_price','sale_price','category_id','stock'
      ];
+
+     /**
+      * category 
+      *
+      *@return void
+      */
+      public function category()
+      {
+         return $this->belongsTo(Category::class);
+      }
+
+      /**
+       * image
+       * 
+       * @return Attribute
+       */
+      protected function image(): Attribute
+      {
+         return Attribute::make(
+            get: fn ($value) => url('/storage/products'. $value),
+         );
+      }
 }
