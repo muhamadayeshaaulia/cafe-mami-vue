@@ -38,7 +38,7 @@ body {
 .c-sidebar .c-sidebar-nav-dropdown-toggle:hover,
 .c-sidebar .c-sidebar-nav-link:hover {
     color: #fff;
-    background: hsla(0, 0%, 100%, .05);
+    background: #42b883;
 }
 
 .active {
