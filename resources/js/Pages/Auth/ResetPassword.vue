@@ -66,13 +66,8 @@
 </template>
 
 <script>
-    //import layout
     import LayoutAuth from '../../Layouts/Auth.vue';
-
-    //import reactive
     import { reactive } from 'vue';
-
-    //import Inertia
     import {
         Head,
         Link,
@@ -80,11 +75,7 @@
     } from '@inertiajs/vue3';
 
     export default {
-
-        //layout
         layout: LayoutAuth,
-
-        //register component
         components: {
             Head,
             Link
@@ -95,33 +86,21 @@
             route: Object,
             session: Object,
         },
-
-        //define composition API
         setup(props) {
-
-            //define form state
             const form = reactive({
                 email: props.route.query.email,
                 password: '',
                 password_confirmation: '',
                 token: props.route.params.token,
             });
-
-            //submit method
             const submit = () => {
-
-                //send data to server
                 router.post('/reset-password', {
-
-                    //data
                     email: form.email,
                     password: form.password,
                     password_confirmation: form.password_confirmation,
                     token: form.token,
                 })
             }
-
-            //return form state and submit method
             return {
                 form,
                 submit,

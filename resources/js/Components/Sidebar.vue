@@ -118,5 +118,30 @@
 </script>
 
 <style>
+.c-sidebar-nav-link.active {
+    color: whitesmoke !important;
+    position: relative;
+    font-weight: bold;
+    background-color: #f0fdf4;
+}
 
+.c-sidebar-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: #42b883 ;
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%; 
+    }
+}
 </style>

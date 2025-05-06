@@ -52,5 +52,8 @@
   </script>
   
   <style>
-  
+  .dropdown-item:hover {
+  background-color: #d4edda;
+  color: #155724;
+}
   </style>

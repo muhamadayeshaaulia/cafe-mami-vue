@@ -2,6 +2,7 @@
 
     <Head>
         <title>Dashboard - CAFE-MAMI</title>
+        <link rel="icon" href="/images/vue2.png" type="image/png">
     </Head>
 
     <main class="c-main">
@@ -103,30 +104,17 @@
         },
 
         props: {
-            //total penjualan hari ini
             count_sales_today: Number,
-
-            //jumlah (Rp.) penjualan hari ini
             sum_sales_today: Number,
-
-            //jumlah profit/laba hari ini
             sum_profits_today: Number,
-
-            //chart sales
             sales_date: Array,
             grand_total: Array,
-
-            //produk terlaris
             product: Array,
             total: Array,
-
-            //stok yg sudah mau habis
             products_limit_stock: Array,
         },
 
         setup(props) {
-
-            //method random color
             function randomBackgroundColor(length) {
                 var data = [];
                 for (var i = 0; i < length; i++) {
@@ -134,8 +122,6 @@
                 }
                 return data;
             }
-
-            //method generate random color
             function getRandomColor() {
                 var letters = '0123456789ABCDEF'.split('');
                 var color = '#';
@@ -144,8 +130,6 @@
                 }
                 return color;
             }
-
-            //option chart
             const options = ref({
                 responsive: true,
                 plugins: {
@@ -158,8 +142,6 @@
                 },
                 beginZero: true
             });
-
-            //chart sell week
             const chartSellWeek = {
                 labels: props.sales_date,
                 datasets: [{
@@ -167,8 +149,6 @@
                     backgroundColor: randomBackgroundColor(props.sales_date.length),
                 }, ],
             };
-
-            //chart produk terlaris
             const chartBestProduct = {
                 labels: props.product,
                 datasets: [{

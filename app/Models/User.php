@@ -61,4 +61,5 @@ class User extends Authenticatable
             return [$pr['name']=>true];
         });
     }
+    
 }
