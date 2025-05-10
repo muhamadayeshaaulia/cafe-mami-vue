@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/muhamadayeshaaulia/cafe-mami-vue/actions">
-    <img src="https://github.com/account" alt="Build Status">
+    <img src="https://github.com/muhamadayeshaaulia/cafe-mami-vue/new/main?filename=.github%2Fworkflows%2Fnode.js.yml&workflow_template=ci%2Fnode.js" alt="Build Status">
   </a>
   <a href="https://packagist.org/packages/laravel/framework">
     <img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads">
