@@ -30,6 +30,7 @@
 - **Notifikasi**: SweetAlert2
 - **Email**: SMTP Gmail
 - **Export/Import Data**: Maatwebsite/Excel
+- **Autentikasi**: Laravel Fortify
 
 Proyek ini dirancang untuk mempermudah pemilik kafe dalam mengelola menu, menerima pesanan, dan memantau transaksi secara digital.
 
@@ -42,7 +43,7 @@ Proyek ini dirancang untuk mempermudah pemilik kafe dalam mengelola menu, meneri
 - 📧 **Notifikasi Email**: Kirim konfirmasi pesanan melalui email menggunakan SMTP Gmail.
 - 📊 **Export/Import Excel**: Impor dan ekspor data menu dan pesanan dalam format Excel.
 - 🎨 **Antarmuka Responsif**: Desain UI yang responsif dan ramah pengguna menggunakan Bootstrap CSS.
-- 🔐 **Keamanan**: Autentikasi pengguna menggunakan Laravel Breeze atau Fortify.
+- 🔐 **Keamanan dan Autentikasi**: Menggunakan Laravel Fortify untuk registrasi, login, reset password, dan proteksi otentikasi.
 
 ---
 
@@ -56,28 +57,23 @@ Proyek ini dirancang untuk mempermudah pemilik kafe dalam mengelola menu, meneri
 - **Export/Import Data**: Maatwebsite/Excel
 - **Email**: SMTP Gmail
 - **Database**: MySQL / PostgreSQL
+- **Auth**: Laravel Fortify
 
 ---
 
-## Instalasi dan Pengaturan
+## Laravel Fortify
 
-### 1. Persyaratan
+Laravel Fortify adalah backend authentication service untuk Laravel. Pada proyek ini, Fortify digunakan untuk:
 
-- PHP >= 8.2
-- Composer
-- Node.js & NPM
-- MySQL / PostgreSQL
-- Git
+- Registrasi pengguna baru
+- Login dan logout
+- Verifikasi email
+- Reset password
+- Proteksi route menggunakan middleware `auth` dan `verified`
 
-### 2. Kloning Repository
+### Contoh Penggunaan Helper
 
-```bash
-git clone https://github.com/muhamadayeshaaulia/cafe-mami-vue.git
-cd cafe-mami-vue
+```php
+use Illuminate\Support\Facades\Auth;
 
-
----
-
-Jika Anda memerlukan bantuan lebih lanjut atau ingin menambahkan fitur lain, jangan ragu untuk menghubungi saya!
-::contentReference[oaicite:4]{index=4}
- 
+$user = Auth::user();
