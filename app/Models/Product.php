@@ -17,7 +17,7 @@ class Product extends Model
      */
 
      protected $fillable = [
-        'image','barcode','title','description','buy_price','sale_price','category_id','stock'
+        'image','barcode','title','description','buy_price','sell_price','category_id','stock'
      ];
 
      /**
