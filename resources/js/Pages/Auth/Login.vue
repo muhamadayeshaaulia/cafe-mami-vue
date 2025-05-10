@@ -1,9 +1,19 @@
 <template>
 
-    <Head>
+    <head>
         <title>Login Account - Cafe Mami</title>
+        <meta name="description" content="Login ke akun Cafe Mami untuk memesan kopi dan makanan favorit Anda. Aman, cepat, dan mudah.">
+        <meta name="keywords" content="login cafe mami, masuk akun cafe mami, cafe mami, kopi, makanan, akun pelanggan">
+        <meta name="author" content="Cafe Mami">
+        <meta name="robots" content="index, follow">
+        <meta property="og:title" content="Login Account - Cafe Mami">
+        <meta property="og:description" content="Masuk ke akun Anda di Cafe Mami dan bekerja lah dengan jujur dan bertanggung jawab.">
+        <meta property="og:image" content="/images/vue1.png">
+        <meta property="og:url" content="https://yourdomain.com/login">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="/images/vue2.png" type="image/png">
-    </Head>
+    </head>
+
     <div class="col-md-4">
         <div class="fade-in">
             <div class="text-center mb-4">
