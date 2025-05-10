@@ -32,7 +32,11 @@ body {
 }
 
 .text-primary {
-    color: #894b9d !important;
+    color: #42b883 !important;
+}
+.text-primary:hover {
+    background-color: #35495e !important;
+    border-color: #35495e !important;
 }
 
 .c-sidebar .c-sidebar-nav-dropdown-toggle:hover,
@@ -54,7 +58,11 @@ body {
 */
 .bg-green {
     /* background-color: #43a047; */
-    background-color: #894b9d;
+    background-color: #42b883;
+}
+.btn-green:hover {
+    background-color: #35495e !important;
+    border-color: #35495e !important;
 }
 
 .bg-jumbotron {
@@ -149,8 +157,12 @@ body {
 }
 
 .btn-purple {
-    background-color: #894b9d !important;
+    background-color: #42b883 !important;
     color: white !important;
+}
+.btn-purple:hover {
+    background-color: #35495e !important;
+    border-color: #35495e !important;
 }
 
 .carousel-custom {
