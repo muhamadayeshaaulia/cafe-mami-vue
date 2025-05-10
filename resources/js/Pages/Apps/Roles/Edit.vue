@@ -1,6 +1,6 @@
 <template>
     <Head>
-        <title>Edit Role - Aplikasi Kasir</title>
+        <title>Edit Role - CAFE-MAMI</title>
     </Head>
     <main class="c-main">
         <div class="container-fluid">

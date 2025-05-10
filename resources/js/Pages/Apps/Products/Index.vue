@@ -1,6 +1,7 @@
 <template>
     <Head>
-        <title>Products - Aplikasi Kasir</title>
+        <title>Products - CAFE-MAMI</title>
+        <link rel="icon" href="/images/vue2.png" type="image/png">
     </Head>
     <main class="c-main">
         <div class="container-fluid">

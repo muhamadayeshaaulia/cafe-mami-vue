@@ -1,7 +1,8 @@
 <template>
 
     <Head>
-        <title>Add New Role - Aplikasi Kasir</title>
+        <title>Add New Role - CAFE-MAMI</title>
+        <link rel="icon" href="/images/vue2.png" type="image/png">
     </Head>
     <main class="c-main">
         <div class="container-fluid">
