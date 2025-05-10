@@ -74,3 +74,10 @@ Proyek ini dirancang untuk mempermudah pemilik kafe dalam mengelola menu, meneri
 ```bash
 git clone https://github.com/muhamadayeshaaulia/cafe-mami-vue.git
 cd cafe-mami-vue
+
+
+---
+
+Jika Anda memerlukan bantuan lebih lanjut atau ingin menambahkan fitur lain, jangan ragu untuk menghubungi saya!
+::contentReference[oaicite:4]{index=4}
+ 
