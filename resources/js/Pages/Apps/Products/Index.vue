@@ -161,28 +161,34 @@ export default {
       });
     };
 
-    const destroy = (id) => {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.delete(`/apps/products/${id}`);
+   const destroy = (id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      router.delete(`/apps/products/${id}`, {
+        onSuccess: () => {
           Swal.fire({
             title: "Deleted!",
             text: "Product deleted successfully.",
             icon: "success",
             timer: 2000,
             showConfirmButton: false,
+          }).then(() => {
+            location.reload();
           });
-        }
+        },
       });
-    };
+    }
+  });
+};
+
 
     const scrollTable = (direction) => {
       const el = tableScroll.value;

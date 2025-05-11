@@ -10,11 +10,15 @@
                     <div class="col-md-4">
                         <div class="card border-0 rounded-3 shadow">
                             <div class="card-body">
-
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Scan Barcode via Kamera</label>
+                                    <div id="reader" style="width: 100%; max-width: 300px;"></div>
+                                </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text"><i class="fa fa-barcode"></i></span>
                                     <input type="text" class="form-control" v-model="barcode" @keyup="searchProduct" placeholder="Scan or Input Barcode">
                                 </div>
+
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Product Name</label>
                                     <input type="text" class="form-control" :value="product.title" placeholder="Product Name" readonly>
@@ -32,14 +36,8 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-
-                        <div v-if="session.error" class="alert alert-danger">
-                            {{ session.error }}
-                        </div>
-
-                        <div v-if="session.success" class="alert alert-success">
-                            {{ session.success }}
-                        </div>
+                        <div v-if="session.error" class="alert alert-danger">{{ session.error }}</div>
+                        <div v-if="session.success" class="alert alert-success">{{ session.success }}</div>
 
                         <div class="card border-0 rounded-3 shadow border-top-success">
                             <div class="card-body">
@@ -74,11 +72,11 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr style="background-color: #e6e6e7;">
-                                            <th scope="col">#</th>
-                                            <th scope="col">Product Name</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Qty</th>
-                                            <th scope="col">Sub Total</th>
+                                            <th>#</th>
+                                            <th>Product Name</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th>Sub Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -123,145 +121,182 @@
 </template>
 
 <script>
-    import LayoutApp from '../../../Layouts/App.vue';
-    import { Head, router } from '@inertiajs/vue3';
-    import VueMultiselect from 'vue-multiselect';
-    import 'vue-multiselect/dist/vue-multiselect.css';
-    import { ref } from 'vue';
-    import axios from 'axios';
-    import Swal from 'sweetalert2';
-    export default {
-        layout: LayoutApp,
-        components: {
-            Head,
-            VueMultiselect
-        },
-        props: {
-            auth: Object,
-            customers: Array,
-            carts_total: Number,
-            session: Object,
-            carts: Array
-        },
-        setup(props) {
-            const barcode = ref('');
-            const product = ref({});
-            const qty = ref(1);
-            const searchProduct = () => {
-                axios.post('/apps/transactions/searchProduct', {
-                    barcode: barcode.value
+import LayoutApp from '../../../Layouts/App.vue';
+import { Head, router } from '@inertiajs/vue3';
+import VueMultiselect from 'vue-multiselect';
+import 'vue-multiselect/dist/vue-multiselect.css';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
-                }).then(response => {
-                    if(response.data.success) {
-                        product.value = response.data.data;
-                    } else {
-                        product.value = {};
-                    }
-                });
+export default {
+    layout: LayoutApp,
+    components: {
+        Head,
+        VueMultiselect
+    },
+    props: {
+        auth: Object,
+        customers: Array,
+        carts_total: Number,
+        session: Object,
+        carts: Array
+    },
+    setup(props) {
+        const barcode = ref('');
+        const product = ref({});
+        const qty = ref(1);
+        const cash = ref(0);
+        const change = ref(0);
+        const discount = ref(0);
+        const customer_id = ref('');
+        const grandTotal = ref(props.carts_total);
+        let scanner = null;
+        const searchProduct = () => {
+            axios.post('/apps/transactions/searchProduct', {
+                barcode: barcode.value
+            }).then(response => {
+                if (response.data.success) {
+                    product.value = response.data.data;
+                } else {
+                    product.value = {};
+                }
+            });
+        };
+        const clearSearch = () => {
+            product.value = {};
+            barcode.value = '';
+            if (scanner) {
+                scanner.clear();
             }
-            const clearSearch = () => {
-                product.value = {};
-                barcode.value = '';
-            }
-            const grandTotal = ref(props.carts_total);
-            const addToCart = () => {
-                router.post('/apps/transactions/addToCart', {
-                    product_id: product.value.id,
-                    qty: qty.value,
-                    sell_price: product.value.sell_price,
-                    
-                }, {
-                    onSuccess: () => {
-                        clearSearch();
-                        qty.value = 1;
-                        grandTotal.value = props.carts_total;
-                        cash.value = 0;
-                        change.value = 0;
-                    },
-                });
-
-                
-            }
-            const destroyCart = (cart_id) => {
-                router.post('/apps/transactions/destroyCart', {
-                    cart_id: cart_id
-                }, {
-                    onSuccess: () => {
-                        grandTotal.value = props.carts_total;
-                        cash.value = 0;
-                        change.value = 0;
-                    },
-                })
-            }
-            const cash      = ref(0);
-            const change    = ref(0);
-            const discount  = ref(0);
-            const setDiscount = () => {
-                grandTotal.value = props.carts_total - discount.value;
-                cash.value = 0;
-                change.value = 0;
-            }
-            const setChange = () => {
-                change.value = cash.value - grandTotal.value;
-            }
-            const customer_id = ref('');
-            const storeTransaction = () => {
-                axios.post('/apps/transactions/store', {
-                    customer_id: customer_id.value ? customer_id.value.id : '',
-                    discount: discount.value,
-                    grand_total: grandTotal.value,
-                    cash: cash.value,
-                    change: change.value
-                })
-                .then(response => {
+            initScanner();
+        };
+        const addToCart = () => {
+            router.post('/apps/transactions/addToCart', {
+                product_id: product.value.id,
+                qty: qty.value,
+                sell_price: product.value.sell_price,
+            }, {
+                onSuccess: () => {
                     clearSearch();
                     qty.value = 1;
                     grandTotal.value = props.carts_total;
                     cash.value = 0;
                     change.value = 0;
-                    customer_id.value = '';
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Transaction Successfully.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 2000
-                    })
-                    .then(() => {
+                },
+            });
+        };
+        const destroyCart = (cart_id) => {
+            router.post('/apps/transactions/destroyCart', {
+                cart_id: cart_id
+            }, {
+                onSuccess: () => {
+                    grandTotal.value = props.carts_total;
+                    cash.value = 0;
+                    change.value = 0;
+                },
+            });
+        };
+        const setDiscount = () => {
+            grandTotal.value = props.carts_total - discount.value;
+            cash.value = 0;
+            change.value = 0;
+        };
+        const setChange = () => {
+            change.value = cash.value - grandTotal.value;
+        };
+        const storeTransaction = () => {
+            axios.post('/apps/transactions/store', {
+                customer_id: customer_id.value ? customer_id.value.id : '',
+                discount: discount.value,
+                grand_total: grandTotal.value,
+                cash: cash.value,
+                change: change.value
+            }).then(response => {
+                clearSearch();
+                qty.value = 1;
+                grandTotal.value = props.carts_total;
+                cash.value = 0;
+                change.value = 0;
+                customer_id.value = '';
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Transaction Successfully.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    setTimeout(() => {
+                        window.open(`/apps/transactions/print?invoice=${response.data.data.invoice}`, '_blank');
+                        location.reload();
+                    }, 50);
+                });
+            });
+        };
+        const initScanner = () => {
+            scanner = new Html5QrcodeScanner("reader", {
+                fps: 10,
+                qrbox: { width: 250, height: 150 }
+            }, false);
 
-                        setTimeout(() => {
-                            window.open(`/apps/transactions/print?invoice=${response.data.data.invoice}`, '_blank');
-                            location.reload();
-
-                        }, 50);
-
-                    })
-                })
-
-            }
-
-            return {
-                barcode,
-                product,
-                searchProduct,
-                clearSearch,
-                qty,
-                grandTotal,
-                addToCart,
-                destroyCart,
-                cash,
-                change,
-                discount,
-                setDiscount,
-                setChange,
-                customer_id,
-                storeTransaction
-            }
-
-        }
+            scanner.render((decodedText) => {
+                barcode.value = decodedText;
+                searchProduct();
+                scanner.clear();
+            }, (error) => {
+            });
+        };
+        onMounted(() => {
+            initScanner();
+        });
+        onUnmounted(() => {
+    if (scanner) {
+        scanner.clear().then(() => {
+            scanner = null;
+        }).catch((error) => {
+            console.warn("Gagal membersihkan scanner:", error);
+        });
     }
+});
+        const formatPrice = (value) => {
+            return new Intl.NumberFormat('id-ID').format(value);
+        };
+
+        return {
+            barcode,
+            product,
+            searchProduct,
+            clearSearch,
+            qty,
+            grandTotal,
+            addToCart,
+            destroyCart,
+            cash,
+            change,
+            discount,
+            setDiscount,
+            setChange,
+            customer_id,
+            storeTransaction,
+            formatPrice
+        };
+    }
+}
 </script>
 
-<style>
+<style scoped>
+#reader {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
 
 </style>
