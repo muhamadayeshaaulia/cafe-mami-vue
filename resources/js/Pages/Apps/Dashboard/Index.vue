@@ -87,7 +87,7 @@
 </template>
 
 <script>
-    import LayoutApp from '../../../Layouts/App.vue';
+    import LayoutApp from '../../../layouts/App.vue';
     import { Head } from '@inertiajs/vue3';
     import { ref } from 'vue';
     import { BarChart, DoughnutChart } from 'vue-chart-3';

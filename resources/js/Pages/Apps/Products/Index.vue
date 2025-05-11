@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import LayoutApp from "../../../Layouts/App.vue";
+import LayoutApp from "../../../layouts/App.vue";
 import Pagination from "../../../Components/Pagination.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import { ref, watch } from "vue";

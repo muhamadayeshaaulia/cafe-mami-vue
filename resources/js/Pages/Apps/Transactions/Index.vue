@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import LayoutApp from '../../../Layouts/App.vue';
+import LayoutApp from '../../../layouts/App.vue';
 import { Head, router } from '@inertiajs/vue3';
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css';
