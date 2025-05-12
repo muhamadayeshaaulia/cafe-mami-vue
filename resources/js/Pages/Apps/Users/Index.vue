@@ -57,12 +57,18 @@
                           <td>{{ user.email }}</td>
                           <td>
                             <span
-                              v-for="(role, index) in user.roles"
-                              :key="index"
-                              class="badge badge-primary shadow border-0 ms-2 mb-2"
-                            >
-                              {{ role.name }}
-                            </span>
+                            v-for="(role, index) in user.roles"
+                            :key="index"
+                            :class="[
+                              'badge shadow border-0 ms-2 mb-2',
+                              role.name === 'admin' ? 'bg-danger' :
+                              role.name === 'owner' ? 'bg-primary' :
+                              role.name === 'cashier' ? 'bg-success' :
+                              'bg-secondary'
+                            ]"
+                          >
+                            {{ role.name }}
+                          </span>
                           </td>
                           <td class="text-center">
                             <Link

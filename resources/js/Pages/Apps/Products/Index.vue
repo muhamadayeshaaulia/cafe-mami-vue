@@ -107,13 +107,20 @@
     <!-- Barcode Modal -->
     <div v-if="showBarcodeModal" class="image-modal" @click.self="closeBarcodeModal">
       <div class="image-modal-content">
-        <Barcode
-          :value="selectedBarcode"
-          format="CODE39"
-          lineColor="#000"
-          :width="2"
-          :height="80"
-        />
+        <div id="barcode-to-image">
+          <Barcode
+            :value="selectedBarcode"
+            format="CODE39"
+            lineColor="#000"
+            :width="2"
+            :height="80"
+          />
+        </div>
+        <div style="margin-top: 15px;">
+          <button class="btn btn-success" @click="downloadBarcodeImage">
+            ⬇ Download Barcode
+          </button>
+        </div>
         <button class="close-btn" @click="closeBarcodeModal">&times;</button>
       </div>
     </div>
@@ -127,6 +134,7 @@ import { Head, Link, router } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 import Swal from "sweetalert2";
 import Barcode from "../../../Components/Barcode.vue";
+import * as htmlToImage from 'html-to-image';
 
 export default {
   layout: LayoutApp,
@@ -161,34 +169,33 @@ export default {
       });
     };
 
-   const destroy = (id) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      router.delete(`/apps/products/${id}`, {
-        onSuccess: () => {
-          Swal.fire({
-            title: "Deleted!",
-            text: "Product deleted successfully.",
-            icon: "success",
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            location.reload();
+    const destroy = (id) => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.delete(`/apps/products/${id}`, {
+            onSuccess: () => {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Product deleted successfully.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                location.reload();
+              });
+            },
           });
-        },
+        }
       });
-    }
-  });
-};
-
+    };
 
     const scrollTable = (direction) => {
       const el = tableScroll.value;
@@ -196,6 +203,37 @@ export default {
       const amount = 200;
       el.scrollLeft += direction === "right" ? amount : -amount;
     };
+
+    const downloadBarcodeImage = () => {
+  Swal.fire({
+    title: 'Download Barcode?',
+    text: 'Apakah kamu ingin mengunduh barcode ini?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Ya, Unduh!',
+    cancelButtonText: 'Batal',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const node = document.getElementById('barcode-to-image');
+      if (!node) return;
+
+      htmlToImage.toPng(node)
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = `barcode-${selectedBarcode.value}.png`;
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((error) => {
+          console.error('Gagal menyimpan barcode:', error);
+          Swal.fire('Error', 'Gagal menyimpan barcode!', 'error');
+        });
+    }
+  });
+};
+
 
     watch(search, (newVal) => {
       if (newVal === "") {
@@ -216,6 +254,7 @@ export default {
       closeBarcodeModal,
       tableScroll,
       scrollTable,
+      downloadBarcodeImage,
     };
   },
 };
@@ -251,6 +290,7 @@ export default {
   z-index: 2;
   border-radius: 4px;
 }
+
 @media (min-width: 768px) {
   .scroll-btn {
     display: none;
