@@ -219,8 +219,18 @@ export default {
       const node = document.getElementById('barcode-to-image');
       if (!node) return;
 
+      Swal.fire({
+        title: 'Sedang memproses...',
+        text: 'Mohon tunggu, barcode sedang diproses.',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       htmlToImage.toPng(node)
         .then((dataUrl) => {
+          Swal.close();
           const link = document.createElement('a');
           link.download = `barcode-${selectedBarcode.value}.png`;
           link.href = dataUrl;
