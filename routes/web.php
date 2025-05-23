@@ -41,6 +41,9 @@ Route::prefix('apps')->group(function() {
         Route::get('/sales/filter', [\App\Http\Controllers\Apps\SaleController::class, 'filter'])->name('apps.sales.filter');
         Route::get('/sales/export', [\App\Http\Controllers\Apps\SaleController::class, 'export'])->name('apps.sales.export');
         Route::get('/sales/pdf', [\App\Http\Controllers\Apps\SaleController::class, 'pdf'])->name('apps.sales.pdf');
+        Route::get('/sales/print/{id}', [\App\Http\Controllers\Apps\SaleController::class, 'printNota'])->name('sales.printNota');
+        Route::post('/sales/send-email', [\App\Http\Controllers\Apps\SaleController::class, 'sendEmail'])->name('sales.sendEmail');
+
 
         Route::get('/profits', [\App\Http\Controllers\Apps\ProfitController::class, 'index'])->middleware('permission:profits.index')->name('apps.profits.index');
         Route::get('/profits/filter', [\App\Http\Controllers\Apps\ProfitController::class, 'filter'])->name('apps.profits.filter');

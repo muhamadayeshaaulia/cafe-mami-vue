@@ -1,7 +1,7 @@
 <template>
   <Head>
     <title>Report Sales - CAFE-MAMI</title>
-    <link rel="icon" href="/images/vue2.png">
+    <link rel="icon" href="/images/vue2.png" />
   </Head>
   <main class="c-main">
     <div class="container-fluid">
@@ -10,8 +10,11 @@
           <div class="col-md-12">
             <div class="card border-0 rounded-3 shadow border-top-purple">
               <div class="card-header">
-                <span class="font-weight-bold"><i class="fa fa-chart-bar"></i> REPORT SALES</span>
+                <span class="font-weight-bold">
+                  <i class="fa fa-chart-bar"></i> REPORT SALES
+                </span>
               </div>
+
               <div class="card-body">
                 <form @submit.prevent="filter">
                   <div class="row">
@@ -63,7 +66,6 @@
                     </a>
                   </div>
 
-                  <!-- Scrollable Table Wrapper -->
                   <div class="table-scroll-wrapper">
                     <button class="scroll-btn left" @click="scrollTable('left')">&#8592;</button>
 
@@ -76,6 +78,7 @@
                             <th scope="col">Cashier</th>
                             <th scope="col">Customer</th>
                             <th scope="col">Total</th>
+                            <th scope="col" class="text-center">Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -85,10 +88,31 @@
                             <td>{{ sale.cashier.name }}</td>
                             <td>{{ sale.customer ? sale.customer.name : 'Umum' }}</td>
                             <td class="text-end">Rp. {{ formatPrice(sale.grand_total) }}</td>
+                            <td class="text-center">
+                              <a
+                                class="btn btn-sm btn-success"
+                                :href="`/apps/sales/print/${sale.id}`"
+                                target="_blank"
+                                title="Print Nota"
+                              >
+                                <i class="fa fa-print"></i>
+                              </a>
+                              <button
+                                @click="openEmailModal(sale.id)"
+                                class="btn btn-sm btn-primary"
+                                title="Send Invoice"
+                              >
+                                <i class="fa fa-envelope"></i>
+                              </button>
+                            </td>
                           </tr>
                           <tr>
-                            <td colspan="4" class="text-end fw-bold" style="background-color: #e6e6e7;">TOTAL</td>
-                            <td class="text-end fw-bold" style="background-color: #e6e6e7;">Rp. {{ formatPrice(total) }}</td>
+                            <td colspan="5" class="text-end fw-bold" style="background-color: #e6e6e7;">
+                              TOTAL
+                            </td>
+                            <td class="text-end fw-bold" style="background-color: #e6e6e7;">
+                              Rp. {{ formatPrice(total) }}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -104,9 +128,37 @@
       </div>
     </div>
   </main>
+  <div v-if="showEmailModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Send Invoice to Email</h5>
+          <button type="button" class="close" @click="closeEmailModal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="email">Recipient's Email</label>
+            <input
+              type="email"
+              v-model="email"
+              class="form-control"
+              placeholder="Enter email"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeEmailModal">Close</button>
+          <button type="button" class="btn btn-primary" @click="sendEmail">Send Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import LayoutApp from "../../../layouts/App.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import { ref } from "vue";
@@ -130,11 +182,78 @@ export default {
       "" || new URL(document.location).searchParams.get("end_date")
     );
     const tableScroll = ref(null);
+    const email = ref("");
+    const showEmailModal = ref(false);
+    const selectedSaleId = ref(null);
 
     const filter = () => {
       router.get("/apps/sales/filter", {
         start_date: start_date.value,
         end_date: end_date.value,
+      });
+    };
+
+    const openEmailModal = (saleId) => {
+      selectedSaleId.value = saleId;
+      showEmailModal.value = true;
+    };
+
+    const closeEmailModal = () => {
+      showEmailModal.value = false;
+      email.value = "";
+    };
+
+    const sendEmail = () => {
+      if (!email.value || !email.value.includes("@")) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid Email',
+          text: 'Please enter a valid email address.',
+        });
+        return;
+      }
+      Swal.fire({
+        title: 'Konfirmasi Pengiriman',
+        text: `Apakah Anda yakin ingin mengirim nota ke email ${email.value}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Kirim',
+        cancelButtonText: 'Batal',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Sending Invoice...',
+            text: 'Please wait while we send the invoice email.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+          router.post(
+            "/apps/sales/send-email",
+            { email: email.value, sale_id: selectedSaleId.value },
+            {
+              preserveScroll: true,
+              onSuccess: () => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Email Sent',
+                  text: `Invoice successfully sent to ${email.value}`,
+                });
+                closeEmailModal();
+              },
+              onError: (errors) => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Failed to Send Email',
+                  text: errors.email || 'An unexpected error occurred while sending email.',
+                });
+              },
+            }
+          );
+        }
       });
     };
 
@@ -158,6 +277,12 @@ export default {
       tableScroll,
       scrollTable,
       formatPrice,
+      email,
+      showEmailModal,
+      selectedSaleId,
+      openEmailModal,
+      closeEmailModal,
+      sendEmail,
     };
   },
 };
@@ -193,6 +318,85 @@ export default {
 @media (min-width: 768px) {
   .scroll-btn {
     display: none;
+  }
+}
+
+.btn-sm.btn-dark {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+  max-width: 500px;
+  width: 100%;
+  margin: 0;
+  animation: fadeInDown 0.3s ease;
+}
+
+.modal-content {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+.modal-footer {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-footer button {
+  flex: 1;
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

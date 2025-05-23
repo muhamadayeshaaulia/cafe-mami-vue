@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendSaleInvoice;  // Import mail class
 
 class SaleController extends Controller
 {
@@ -83,4 +85,46 @@ class SaleController extends Controller
         //return PDF for preview / download
         return $pdf->download('sales : '.$request->start_date.' — '.$request->end_date.'.pdf');
     }
+
+    /**
+     * printNota
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function printNota($id)
+    {
+        $transaction = Transaction::with(['cashier', 'customer', 'details.product'])->findOrFail($id);
+
+        return view('print.nota', compact('transaction'));
+    }
+
+    /**
+ * Send Email with Invoice PDF
+ *
+ * @param Request $request
+ * @return \Illuminate\Http\Response
+ */
+public function sendEmail(Request $request)
+{
+    // Validate the incoming data
+    $request->validate([
+        'email' => 'required|email',
+        'sale_id' => 'required|exists:transactions,id', // Validate sale_id
+    ]);
+
+    // Find the sale transaction
+    $sale = Transaction::with('cashier', 'customer')->findOrFail($request->sale_id);
+
+    // Generate PDF for the sale
+    $pdf = PDF::loadView('exports.sales_single', ['sale' => $sale]);
+
+    // Send the email with the generated PDF as an attachment
+    Mail::to($request->email)->send(new SendSaleInvoice($sale, $pdf));
+
+    // Return a success message to the frontend
+    return redirect()->back()->with('success', 'Email successfully sent to ' . $request->email);
+
+}
+
 }
